@@ -1,0 +1,19 @@
+services:
+
+  app:
+    container_name: linx_ui
+    build: .
+    ports:
+      - "5173:5173"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - VITE_API_URL=${VITE_API_URL}
+    restart: unless-stopped
+    networks:
+      - api_linx_network
+
+networks:
+  api_linx_network:
+    external: true
