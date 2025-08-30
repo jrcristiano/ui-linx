@@ -19,7 +19,8 @@ export default function LoginPage() {
       .email('E-mail inválido')
       .required('O e-mail é obrigatório'),
     password: Yup.string()
-      .required('A senha é obrigatória'),
+      .required('A senha é obrigatória')
+      .min(8, 'Senha deve conter pelo menos 8 caracteres'),
   });
 
   const handleSubmit = async (values: typeof initialValues) => {

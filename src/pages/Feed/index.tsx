@@ -1,4 +1,5 @@
 import { ErrorMessage, Field, Form, Formik } from 'formik';
+import { LogOut } from 'lucide-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import * as Yup from 'yup';
 import { HttpStatusCode } from '../../common/enums/http.status.code.enum';
@@ -9,6 +10,7 @@ import { showSuccessToast } from '../../components/@Toasts/SuccessToast';
 import EmptyFeed from '../../components/EmptyFeed';
 import LoadingPosts from '../../components/LoadingPosts';
 import PostCard from '../../components/PostCard';
+import { useLogout } from '../../hooks/use.logout';
 import { getUser } from '../../services/auth/user.session.service';
 import { createPost } from '../../services/posts/create.post.service';
 import { getPaginatedPosts } from '../../services/posts/get.paginated.posts.service';
@@ -66,16 +68,33 @@ export default function FeedPage() {
   }, [handleFetchPaginatedPosts]);
 
   const postCards = useMemo(() => posts.map(post => (
-    <MemoizedPostCard key={post.id} post={post} authUser={authUser} />
+    <MemoizedPostCard
+      key={post.id}
+      post={post}
+      authUser={authUser}
+      posts={posts}
+      setPosts={setPosts}
+
+    />
   )), [posts, authUser]);
 
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-2xl mx-auto bg-white min-h-screen">
         <div className="sticky top-0 bg-white border-b border-gray-200 z-10">
-          <div className="p-4">
-            <h1 className="text-2xl font-bold text-gray-900 mb-4">Feed</h1>
-            <p>Olá, {authUser?.name}!</p>
+          <div className="flex justify-between p-4">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900 mb-4">Feed</h1>
+              <p>Olá, {authUser?.name}!</p>
+            </div>
+            <div>
+              <button
+                onClick={useLogout}
+                className="flex items-center gap-2 px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 cursor-pointer transition-colors font-medium"
+              >
+                <LogOut size={18} /> Sair
+              </button>
+            </div>
           </div>
         </div>
 
@@ -100,6 +119,7 @@ export default function FeedPage() {
 
                   showSuccessToast('Post publicado com sucesso.');
                   await handleFetchPaginatedPosts();
+
                   resetForm();
                   setShowCreatePost(false);
                 } catch (error) {
@@ -165,11 +185,6 @@ export default function FeedPage() {
                   </>
                 ) : 'Carregar mais posts'}
               </button>
-            </div>
-          )}
-          {posts.length > 0 && pagination && (
-            <div className="text-center p-4 text-gray-500 text-sm">
-              Mostrando {posts.length} de {pagination.total} posts
             </div>
           )}
         </div>
