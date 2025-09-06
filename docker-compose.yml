@@ -1,19 +1,17 @@
 services:
-
-  app:
-    container_name: linx_ui
-    build: .
+  app-prod:
+    container_name: linx_ui_prod
+    build:
+      context: .
+      target: final   # usa etapa final com Nginx
+      args:
+        NODE_ENV: production
     ports:
-      - "5173:5173"
-    volumes:
-      - .:/app
-      - /app/node_modules
+      - "80:80"
     environment:
-      - VITE_API_URL=${VITE_API_URL}
+      NODE_ENV: production
+      VITE_API_URL: ${VITE_API_URL}
     restart: unless-stopped
-    networks:
-      - api_linx_network
-
 networks:
-  api_linx_network:
+  linx_network:
     external: true
